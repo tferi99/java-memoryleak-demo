@@ -1,8 +1,8 @@
-package org.ftoth.javaprofilerdemo.controller;
+package org.ftoth.javamemoryleakdemo.controller;
 
 import org.apache.log4j.Logger;
-import org.ftoth.javaprofilerdemo.model.TestData;
-import org.ftoth.javaprofilerdemo.util.MemoryLeakUtil;
+import org.ftoth.javamemoryleakdemo.model.TestData;
+import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

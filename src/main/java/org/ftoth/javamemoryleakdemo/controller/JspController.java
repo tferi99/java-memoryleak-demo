@@ -1,4 +1,4 @@
-package org.ftoth.javaprofilerdemo.controller;
+package org.ftoth.javamemoryleakdemo.controller;
 
 public class JspController
 {

@@ -18,7 +18,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
     <span class="navbar-brand">Java Memory Leak Test</span>
+    <div class="collapse navbar-collapse"></div>
     <a class="nav-link" href="/">Home</a>
+    <form class="form-inline my-2 my-lg-0" action="/gc">
+        <input type="hidden" name="gc" value="1">
+        <input type="hidden" name="redirect" value="/memalloc_init">
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">GC</button>
+    </form>
 </nav>
 
 <div>
@@ -27,7 +33,7 @@
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Loading to static/singleton <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks (and size in MB)">${leakCount} (${leakSize})</span></h5>
+            <h5 class="card-title">Loading to static/singleton <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks (and size in MB)">${leakCount} (${leakSize} MB)</span></h5>
             <form id="form" action="/memalloc">
                 <div class="form-group">
                     <label for="mb">MB</label>

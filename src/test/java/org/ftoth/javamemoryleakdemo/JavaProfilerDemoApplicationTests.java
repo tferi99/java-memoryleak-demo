@@ -1,4 +1,4 @@
-package org.ftoth.javaprofilerdemo;
+package org.ftoth.javamemoryleakdemo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

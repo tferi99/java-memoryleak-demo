@@ -1,8 +1,8 @@
-package org.ftoth.javaprofilerdemo.controller;
+package org.ftoth.javamemoryleakdemo.controller;
 
 import java.util.Map;
 
-import org.ftoth.javaprofilerdemo.util.MemoryLeakUtil;
+import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

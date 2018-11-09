@@ -1,6 +1,6 @@
-package org.ftoth.javaprofilerdemo.model;
+package org.ftoth.javamemoryleakdemo.model;
 
-import org.ftoth.javaprofilerdemo.util.SystemUtil;
+import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 
 import java.util.ArrayList;
 import java.util.List;

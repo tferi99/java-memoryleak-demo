@@ -1,4 +1,4 @@
-package org.ftoth.javaprofilerdemo.util;
+package org.ftoth.javamemoryleakdemo.util;
 
 public class SystemUtil
 {

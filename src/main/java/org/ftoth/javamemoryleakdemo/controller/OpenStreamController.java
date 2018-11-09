@@ -1,8 +1,8 @@
-package org.ftoth.javaprofilerdemo.controller;
+package org.ftoth.javamemoryleakdemo.controller;
 
 import org.apache.log4j.Logger;
-import org.ftoth.javaprofilerdemo.model.TestData;
-import org.ftoth.javaprofilerdemo.util.MemoryLeakUtil;
+import org.ftoth.javamemoryleakdemo.model.TestData;
+import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class MemAllocController extends JspController
+public class OpenStreamController extends JspController
 {
-	private static Logger log = Logger.getLogger(MemAllocController.class);
-
-	private static final int MEGA_BYTES = 1;
+	private static Logger log = Logger.getLogger(OpenStreamController.class);
 	private static List<TestData> leak = new ArrayList<TestData>();
+	private static int numberOfOpenStreams = 0;
 
 	public int getLeakCount()
 	{
@@ -33,40 +32,42 @@ public class MemAllocController extends JspController
 		return size;
 	}
 
-	@RequestMapping("/memalloc_init")
-	public String memalloc_init(Map<String, Object> model)
+	public int getOpenStreamCount()
 	{
-		model.put("mb", Integer.toString(MEGA_BYTES));
-		model.put("leakCount", getLeakCount());
-		model.put("leakSize", getLeakSize() / MemoryLeakUtil.MB);
-		model.put("storeChecked", CHECKBOX_CHECKED);
-		model.put("gcChecked", CHECKBOX_CHECKED);
-
-		return "memalloc";
+		return numberOfOpenStreams;
 	}
 
-	@RequestMapping("/memalloc")
-	public String memalloc(@RequestParam(value = "mb", required = false) String mb, @RequestParam(value = "store", required = false) String store, @RequestParam(value = "gc", required = false) String gc, Map<String, Object> model)
+	@RequestMapping("/openstream_init")
+	public String memalloc_init(Map<String, Object> model)
+	{
+		model.put("openStreamCount", getOpenStreamCount());
+		model.put("leakCount", getLeakCount());
+		model.put("leakSize", getLeakSize() / MemoryLeakUtil.MB);
+		model.put("storeChecked", "");
+		model.put("gcChecked", CHECKBOX_CHECKED);
+		return "openstream";
+	}
+
+	@RequestMapping("/openstream")
+	public String openstream(@RequestParam(value = "store", required = false) String store, @RequestParam(value = "gc", required = false) String gc, Map<String, Object> model)
 	{
 		boolean isStored = store != null;
 		boolean isGc = gc != null;
 
-		int mbToAlloc = MEGA_BYTES;
-		if (mb != null) {
-			mbToAlloc  = Integer.parseInt(mb);
-		}
-
-		// getting index
 		int generated = leak.size();
 		generated++;
 
-		List<String> data = MemoryLeakUtil.allocateMemory(mbToAlloc, 0);
+		List<String> data = MemoryLeakUtil.readStreamButDontCloseIt();
+		numberOfOpenStreams++;
+		if (log.isDebugEnabled()) {
+			log.debug("Generated a memory leak from a not-closed stream");
+		}
 		if (isStored) {
-			String title = "Mem-" + generated;
+			String title = "OpenStream-" + generated;
 			TestData d = new TestData(title, data);
 			leak.add(d);
 			if (log.isDebugEnabled()) {
-				log.debug("Allocated memory -> memory leak");
+				log.debug("Allocated memory -> extra memory leak");
 			}
 		}
 
@@ -77,12 +78,12 @@ public class MemAllocController extends JspController
 			}
 		}
 
-		model.put("mb", Integer.toString(mbToAlloc));
+		model.put("openStreamCount", getOpenStreamCount());
 		model.put("leakCount", getLeakCount());
 		model.put("leakSize", getLeakSize() / MemoryLeakUtil.MB);
 		model.put("storeChecked", isStored ? CHECKBOX_CHECKED : "");
 		model.put("gcChecked", isGc ? CHECKBOX_CHECKED : "");
-		return "memalloc";
+		return "openstream";
 	}
 }
 

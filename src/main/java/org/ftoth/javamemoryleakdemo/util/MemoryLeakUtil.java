@@ -1,4 +1,4 @@
-package org.ftoth.javaprofilerdemo.util;
+package org.ftoth.javamemoryleakdemo.util;
 
 import org.apache.log4j.Logger;
 
