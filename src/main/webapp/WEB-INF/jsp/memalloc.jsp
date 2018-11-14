@@ -16,47 +16,48 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
-    <span class="navbar-brand">Java Memory Leak Test</span>
-    <div class="collapse navbar-collapse"></div>
-    <a class="nav-link" href="/">Home</a>
-    <form class="form-inline my-2 my-lg-0" action="/gc">
-        <input type="hidden" name="gc" value="1">
-        <input type="hidden" name="redirect" value="/memalloc_init">
-        <button class="btn btn-primary my-2 my-sm-0" type="submit">GC</button>
-    </form>
-</nav>
+<div class="container ml-5 mr-5">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+        <span class="navbar-brand">Java Memory Leak Test</span>
+        <div class="collapse navbar-collapse"></div>
+        <a class="nav-link" href="/">Home</a>
+        <form class="form-inline my-2 my-lg-0" action="/gc">
+            <input type="hidden" name="gc" value="1">
+            <input type="hidden" name="redirect" value="/memalloc_init">
+            <button class="btn btn-primary my-2 my-sm-0" type="submit">GC</button>
+        </form>
+    </nav>
 
-<div>
-</div>
+    <div>
+    </div>
 
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Loading to static/singleton <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks (and size in MB)">${leakCount} (${leakSize} MB)</span></h5>
-            <form id="form" action="/memalloc">
-                <div class="form-group">
-                    <label for="mb">MB</label>
-                    <input id="mb" name="mb" class="form-control" value="${mb}">
-                </div>
-                <div class="form-group form-check">
-                    <input class="form-check-input" type="checkbox" id="store" name="store" ${storeChecked}>
-                    <label class="form-check-label" for="store" data-toggle="tooltip" data-placement="right" title="to generate memory leak">store to static</label>
-                </div>
-                <div class="form-group form-check">
-                    <input class="form-check-input" type="checkbox" id="gc" name="gc" ${gcChecked}>
-                    <label class="form-check-label" for="gc" data-toggle="tooltip" data-placement="right" title="GC after creating memory leak">GC</label>
-                </div>
-                <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
-            </form>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Loading to static/singleton <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks (and size in MB)">${leakCount} (${leakSize} MB)</span></h5>
+                <form id="form" action="/memalloc">
+                    <div class="form-group">
+                        <label for="mb">MB</label>
+                        <input id="mb" name="mb" class="form-control" value="${mb}">
+                    </div>
+                    <div class="form-group form-check">
+                        <input class="form-check-input" type="checkbox" id="store" name="store" ${storeChecked}>
+                        <label class="form-check-label" for="store" data-toggle="tooltip" data-placement="right" title="to generate memory leak">store to static</label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input class="form-check-input" type="checkbox" id="gc" name="gc" ${gcChecked}>
+                        <label class="form-check-label" for="gc" data-toggle="tooltip" data-placement="right" title="GC after creating memory leak">GC</label>
+                    </div>
+                    <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="container-fluid mt-3">
-    <div class="loader mx-auto" style="display: none"></div>
+    <div class="container-fluid mt-3">
+        <div class="loader mx-auto" style="display: none"></div>
+    </div>
 </div>
-
 
 <script type="text/javascript" src="webjars/popper.js/1.14.4/umd/popper.min.js"></script>
 <script type="text/javascript" src="webjars/jquery/3.3.1/jquery.js"></script>
