@@ -19,25 +19,38 @@ public class MemoryLeakUtil
 	public static final long MB = 1024 * 1024;
 	private static final String BIG_FILE_URL = "http://norvig.com/big.txt";
 
+	/**
+	 * It allocates an ArrayList and it adds specified amount  
+	 * 1 KB random string
+	 *
+	 *
+	 * @param mbytes
+	 * @param waitPerMBytes
+	 * @return
+	 */
 	public static synchronized List<String> allocateMemory(int mbytes, int waitPerMBytes)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("Allocating " + mbytes + " MBytes ...");
 		}
 
-		List<String> l = new ArrayList<String>();
+		List<String> list = new ArrayList<String>();
 		Random rand = new Random();
+
+		// N MB data into ArrayList
 		for (int n=0; n<mbytes; n++) {
 			if (log.isDebugEnabled()) {
 				log.debug("Allocating 1MB #" + (n + 1));
 			}
+
+			// 1 MB data into ArrayList
 			for(int m=0; m<1024; m++) {
-				// 1K pattern
+				// 1K random pattern as a String
 				StringBuffer b = new StringBuffer();
 				for (int i=0; i<512; i++) {			// 1 char is 2 bytes
 					b.append(Integer.toString(rand.nextInt(9)));
 				}
-				l.add(b.toString());
+				list.add(b.toString());
 			}
 
 			// wait after allocation
@@ -56,7 +69,7 @@ public class MemoryLeakUtil
 		if (log.isDebugEnabled()) {
 			log.debug("END OF ALLOCATION");
 		}
-		return l;
+		return list;
 	}
 
 	public static synchronized List<String> readStreamButDontCloseIt()

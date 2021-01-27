@@ -6,6 +6,8 @@
     <!-- Access the bootstrap Css like this,
         Spring boot will handle the resource mapping automcatically -->
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.1.0/css/fontawesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.1.0/css/solid.css" rel="stylesheet">
 
     <!--
 	<spring:url value="/css/main.css" var="springCss" />
@@ -17,9 +19,15 @@
 <body>
 <div class="container ml-5 mr-5">
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+        <a class="nav-link" href="/"><i class="fas fa-home"></i></a>
         <span class="navbar-brand">Java Memory Leak Test</span>
         <div class="collapse navbar-collapse"></div>
-        <a class="nav-link" href="/">Home</a>
+
+        <form class="form-inline my-2 my-lg-0" action="/memstat">
+            <input type="hidden" name="redirect" value="/openstream_init">
+            <button class="btn btn-primary my-2 my-sm-0 mr-2" type="submit">Memory status</button>
+        </form>
+
         <form class="form-inline my-2 my-lg-0" action="/gc">
             <input type="hidden" name="gc" value="1">
             <input type="hidden" name="redirect" value="/openstream_init">

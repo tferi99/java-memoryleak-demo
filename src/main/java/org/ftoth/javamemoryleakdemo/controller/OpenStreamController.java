@@ -3,6 +3,7 @@ package org.ftoth.javamemoryleakdemo.controller;
 import org.apache.log4j.Logger;
 import org.ftoth.javamemoryleakdemo.model.TestData;
 import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
+import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,10 +73,7 @@ public class OpenStreamController extends JspController
 		}
 
 		if (isGc) {
-			System.gc();
-			if (log.isDebugEnabled()) {
-				log.debug("GC called");
-			}
+			SystemUtil.gc("OpenStreamController");
 		}
 
 		model.put("openStreamCount", getOpenStreamCount());

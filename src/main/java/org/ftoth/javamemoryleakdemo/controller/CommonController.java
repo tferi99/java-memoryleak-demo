@@ -1,6 +1,7 @@
 package org.ftoth.javamemoryleakdemo.controller;
 
 import org.apache.log4j.Logger;
+import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,10 +17,15 @@ public class CommonController
 	@RequestMapping("/gc")
 	public String dc(@RequestParam(value = "redirect") String redirect, Map<String, Object> model)
 	{
+		SystemUtil.gc("CommonController");
+		return "redirect:" + redirect;
+	}
 
-		System.gc();
+	@RequestMapping("/memstat")
+	public String memstat(@RequestParam(value = "redirect") String redirect) {
+		String stat = SystemUtil.getMemoryStatus();
 		if (log.isDebugEnabled()) {
-			log.debug("GC called");
+			log.debug(stat);
 		}
 		return "redirect:" + redirect;
 	}
