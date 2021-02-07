@@ -1,6 +1,7 @@
 package org.ftoth.javamemoryleakdemo.controller;
 
 import org.apache.log4j.Logger;
+import org.ftoth.javamemoryleakdemo.thread.TestThread;
 import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,15 @@ public class CommonController
 	@RequestMapping("/memstat")
 	public String memstat(@RequestParam(value = "redirect") String redirect) {
 		String stat = SystemUtil.getMemoryStatus();
+		if (log.isDebugEnabled()) {
+			log.debug(stat);
+		}
+		return "redirect:" + redirect;
+	}
+
+	@RequestMapping("/threadstat")
+	public String threadstat(@RequestParam(value = "redirect") String redirect) {
+		String stat = TestThread.getThreadStatus();
 		if (log.isDebugEnabled()) {
 			log.debug(stat);
 		}

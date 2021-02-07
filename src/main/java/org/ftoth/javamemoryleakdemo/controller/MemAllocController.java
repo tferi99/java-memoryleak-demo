@@ -17,15 +17,15 @@ public class MemAllocController extends JspController {
 	private static Logger log = Logger.getLogger(MemAllocController.class);
 
 	private static final int MEGA_BYTES = 1;
-	private static List<TestData> leak = new ArrayList<TestData>();
+	private static List<TestData> leaks = new ArrayList<TestData>();
 
 	public int getLeakCount() {
-		return leak.size();
+		return leaks.size();
 	}
 
 	public long getLeakSize() {
 		long size = 0;
-		for (TestData d : leak) {
+		for (TestData d : leaks) {
 			size += d.getSize();
 		}
 		return size;
@@ -53,14 +53,14 @@ public class MemAllocController extends JspController {
 		}
 
 		// getting index
-		int generated = leak.size();
+		int generated = leaks.size();
 		generated++;
 
 		List<String> data = MemoryLeakUtil.allocateMemory(mbToAlloc, 0);
 		if (isStored) {
 			String title = "Mem-" + generated;
 			TestData d = new TestData(title, data);
-			leak.add(d);
+			leaks.add(d);
 			if (log.isDebugEnabled()) {
 				log.debug("Allocated memory -> memory leak");
 

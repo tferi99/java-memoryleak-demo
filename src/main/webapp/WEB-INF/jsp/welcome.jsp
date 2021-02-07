@@ -47,6 +47,10 @@
             <a href="/openstream_init">Unclosed stream</a>
             <span class="badge badge-primary badge-pill" data-toggle="tooltip" data-placement="right" title="number of memory leaks">${streamCount} + ${streamLeakCount} (${streamLeakSize}MB)</span>
         </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="/thread_init">Threads</a>
+            <span class="badge badge-primary badge-pill" data-toggle="tooltip" data-placement="right" title="number of threads/allocated memory">${threadCount} (${threadLeakSize}MB)</span>
+        </li>
         <!--
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <a href="/openconn_init">Unclosed connections</a>

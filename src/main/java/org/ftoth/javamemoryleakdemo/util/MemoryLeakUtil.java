@@ -40,7 +40,7 @@ public class MemoryLeakUtil
 		// N MB data into ArrayList
 		for (int n=0; n<mbytes; n++) {
 			if (log.isDebugEnabled()) {
-				log.debug("Allocating 1MB #" + (n + 1));
+//				log.debug("Allocating 1MB #" + (n + 1));
 			}
 
 			// 1 MB data into ArrayList
@@ -67,7 +67,7 @@ public class MemoryLeakUtil
 			}
 		}
 		if (log.isDebugEnabled()) {
-			log.debug("END OF ALLOCATION");
+			log.debug("    ----> Allocated " + mbytes + " MBytes ...");
 		}
 		return list;
 	}
