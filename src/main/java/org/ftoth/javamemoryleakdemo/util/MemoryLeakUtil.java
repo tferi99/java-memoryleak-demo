@@ -18,6 +18,14 @@ public class MemoryLeakUtil
 
 	public static final long MB = 1024 * 1024;
 	private static final String BIG_FILE_URL = "http://norvig.com/big.txt";
+	private static final int CHARS_IN_1KB = 512;
+	private static final int RANDOM_HEAD_LEN = 10;
+
+	public static synchronized List<String> allocateMemory(int mbytes, int waitPerMBytes)
+	{
+		return allocateMemory(mbytes, null, waitPerMBytes);
+	}
+
 
 	/**
 	 * It allocates an ArrayList and it adds specified amount  
@@ -25,32 +33,67 @@ public class MemoryLeakUtil
 	 *
 	 *
 	 * @param mbytes
+	 * @param content if null/empty then random content will be generated
 	 * @param waitPerMBytes
 	 * @return
 	 */
-	public static synchronized List<String> allocateMemory(int mbytes, int waitPerMBytes)
+	public static synchronized List<String> allocateMemory(int mbytes, String content, int waitPerMBytes)
 	{
+		boolean randomContent = content == null || content.equals("");
+
 		if (log.isDebugEnabled()) {
-			log.debug("Allocating " + mbytes + " MBytes ...");
+			String cnt = randomContent ? "random content" : "'" + content + "'";
+			log.debug("Allocating " + mbytes + " MBytes with " + cnt);
 		}
 
 		List<String> list = new ArrayList<String>();
-		Random rand = new Random();
+
+		// 1 KB content
+		Random rand =  new Random();
+		String norandomContent = null;
+		if (!randomContent) {							// create 1K content once
+			StringBuffer b = new StringBuffer();
+			b = new StringBuffer();
+			content += "|";
+			int norandomContentLen = CHARS_IN_1KB - RANDOM_HEAD_LEN;
+			while (b.length() < norandomContentLen) {
+				int len = norandomContentLen - b.length() > content.length() ? content.length() : norandomContentLen - b.length();
+				b.append(content, 0, len);
+//				log.debug("len: " + b.length());
+			}
+//			log.debug("### LEN: " + b.length());
+			norandomContent = b.toString();
+		}
 
 		// N MB data into ArrayList
 		for (int n=0; n<mbytes; n++) {
+			String content1K;
 			if (log.isDebugEnabled()) {
 //				log.debug("Allocating 1MB #" + (n + 1));
 			}
 
 			// 1 MB data into ArrayList
 			for(int m=0; m<1024; m++) {
-				// 1K random pattern as a String
 				StringBuffer b = new StringBuffer();
-				for (int i=0; i<512; i++) {			// 1 char is 2 bytes
-					b.append(Integer.toString(rand.nextInt(9)));
+				if (randomContent) {							// content is random
+					// 1K random pattern as a String
+					for (int i = 0; i < 512; i++) {            // 1 char is 2 bytes
+						b.append(Integer.toString(rand.nextInt(9)));
+					}
 				}
-				list.add(b.toString());
+				else {											// content = random_header + notrandom
+					for (int i = 0; i < RANDOM_HEAD_LEN-1; i++) {            // 1 char is 2 bytes
+						b.append(Integer.toString(rand.nextInt(9)));
+					}
+					b.append("|");
+					b.append(norandomContent);
+				}
+				content1K = b.toString();
+
+/*				if (log.isDebugEnabled()) {
+					log.debug("Content[" + m + "][" + content1K.length() + "] : " + content1K);
+				}*/
+				list.add(content1K);
 			}
 
 			// wait after allocation

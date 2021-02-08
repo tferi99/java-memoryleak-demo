@@ -50,7 +50,8 @@ public class OpenStreamController extends JspController
 	}
 
 	@RequestMapping("/openstream")
-	public String openstream(@RequestParam(value = "store", required = false) String store, @RequestParam(value = "gc", required = false) String gc, Map<String, Object> model)
+	public String openstream(@RequestParam(value = "store", required = false) String store, @RequestParam(value = "gc", required = false) String gc,
+		 @RequestParam(value = "redirect") String redirect, Map<String, Object> model)
 	{
 		boolean isStored = store != null;
 		boolean isGc = gc != null;
@@ -81,7 +82,8 @@ public class OpenStreamController extends JspController
 		model.put("leakSize", getLeakSize() / MemoryLeakUtil.MB);
 		model.put("storeChecked", isStored ? CHECKBOX_CHECKED : "");
 		model.put("gcChecked", isGc ? CHECKBOX_CHECKED : "");
-		return "openstream";
+
+		return "redirect:" + redirect;
 	}
 }
 

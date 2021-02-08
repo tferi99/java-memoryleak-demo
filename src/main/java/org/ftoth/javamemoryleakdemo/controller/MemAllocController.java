@@ -43,7 +43,9 @@ public class MemAllocController extends JspController {
 	}
 
 	@RequestMapping("/memalloc")
-	public String memalloc(@RequestParam(value = "mb", required = false) String mb, @RequestParam(value = "store", required = false) String store, @RequestParam(value = "gc", required = false) String gc, Map<String, Object> model) {
+	public String memalloc(@RequestParam(value = "mb", required = false) String mb, @RequestParam(value = "store", required = false) String store, @RequestParam(value = "gc", required = false) String gc,
+	   @RequestParam(value = "txt") String txt, @RequestParam(value = "redirect") String redirect, Map<String, Object> model)
+	{
 		boolean isStored = store != null;
 		boolean isGc = gc != null;
 
@@ -56,7 +58,7 @@ public class MemAllocController extends JspController {
 		int generated = leaks.size();
 		generated++;
 
-		List<String> data = MemoryLeakUtil.allocateMemory(mbToAlloc, 0);
+		List<String> data = MemoryLeakUtil.allocateMemory(mbToAlloc, txt, 0);
 		if (isStored) {
 			String title = "Mem-" + generated;
 			TestData d = new TestData(title, data);
@@ -77,7 +79,8 @@ public class MemAllocController extends JspController {
 		model.put("leakSize", getLeakSize() / MemoryLeakUtil.MB);
 		model.put("storeChecked", isStored ? CHECKBOX_CHECKED : "");
 		model.put("gcChecked", isGc ? CHECKBOX_CHECKED : "");
-		return "memalloc";
+
+		return "redirect:" + redirect;
 	}
 }
 

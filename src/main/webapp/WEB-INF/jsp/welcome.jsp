@@ -1,6 +1,16 @@
+<%@ page import="org.ftoth.javamemoryleakdemo.controller.JspController" %>
 <!DOCTYPE html>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+
+<%
+    int refreshSecs = 5;
+    String refreshHead = JspController.createRefreshHeadCode(request, response, refreshSecs);
+    String refreshBody = JspController.createRefreshBodyCode(request, response, refreshSecs);
+%>
+
 <html lang="en">
 <head>
 
@@ -9,6 +19,9 @@
     <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.1.0/css/fontawesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/webjars/font-awesome/5.1.0/css/solid.css" rel="stylesheet">
+    <!--
+    <link rel="stylesheet" type="text/css" href="/webjars/jquery/3.3.1/jquery.min.js" rel="stylesheet">
+    -->
 
     <!--
 	<spring:url value="/css/main.css" var="springCss" />
@@ -17,6 +30,7 @@
     <c:url value="/css/main.css" var="jstlCss" />
     <link href="${jstlCss}" rel="stylesheet" />
 
+    <%=refreshHead%>
 </head>
 <body>
 
@@ -28,15 +42,22 @@
 
         <form class="form-inline my-2 my-lg-0" action="/memstat">
             <input type="hidden" name="redirect" value="/">
-            <button class="btn btn-primary my-2 my-sm-0 mr-2" type="submit">Memory status</button>
+            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Memory status</button>
+        </form>
+
+        <form class="form-inline my-2 my-lg-0" action="/threadstat">
+            <input type="hidden" name="redirect" value="/">
+            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Thread status</button>
         </form>
 
         <form class="form-inline my-2 my-lg-0" action="/gc">
             <input type="hidden" name="gc" value="1">
             <input type="hidden" name="redirect" value="/">
-            <button class="btn btn-primary my-2 my-sm-0" type="submit">GC</button>
+            <button class="btn btn-warning my-2 my-sm-0" type="submit">GC</button>
         </form>
     </nav>
+
+    <%=refreshBody%>
 
     <ul class="list-group">
         <li class="list-group-item d-flex justify-content-between align-items-center">

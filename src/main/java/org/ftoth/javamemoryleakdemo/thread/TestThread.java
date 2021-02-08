@@ -18,6 +18,8 @@ public class TestThread extends Thread
 	private int id;
 	private int aliveSeconds;
 	private int mbToAlloc;
+	private int waitMsecs;
+
 	private List<String> allocatedData;
 
 	public static int getThreadsTotalCount()
@@ -50,16 +52,16 @@ public class TestThread extends Thread
 		TestThread.currentThreadId = currentThreadId;
 	}
 
-	public TestThread(int id, int mbToAlloc, int aliveSeconds)
+	public TestThread(int id, int mbToAlloc, int aliveSeconds, int waitMsecs)
 	{
 		this.id = id;
 		this.mbToAlloc = mbToAlloc;
 		this.aliveSeconds = aliveSeconds;
-
+		this.waitMsecs = waitMsecs;
 		this.setName("Developer TestThread[" + id + "]");
 
 		if (mbToAlloc > 0) {
-			allocatedData = MemoryLeakUtil.allocateMemory(mbToAlloc, 0);
+			allocatedData = MemoryLeakUtil.allocateMemory(mbToAlloc, waitMsecs);
 		}
 
 		TestThread.threadsTotalCount++;
@@ -77,7 +79,11 @@ public class TestThread extends Thread
 		TestThread.threadsTotalAllocatedMBs -= mbToAlloc;
 
 		if (log.isDebugEnabled()) {
-			log.debug(this.getClass().getSimpleName() + "[" + id + "] deleted");
+			String released = "";
+			if(mbToAlloc > 0) {
+				released = " (released " + mbToAlloc + " MB)";
+			}
+			log.debug(this.getClass().getSimpleName() + "[" + id + "] deleted" + released);
 		}
 	}
 
@@ -86,7 +92,7 @@ public class TestThread extends Thread
 	{
 		for (int n=0; n<aliveSeconds; n++) {
 			if (log.isDebugEnabled()) {
-				log.debug(this.getClass().getSimpleName() + "[" + id + "] created " + n + " seconds ago");
+				log.debug(this.getClass().getSimpleName() + "[" + id + "] still alive for " + (aliveSeconds - n) + " second(s)");
 			}
 			try {
 				Thread.sleep(1000);
@@ -101,6 +107,6 @@ public class TestThread extends Thread
 
 	public static String getThreadStatus()
 	{
-		return "Number of threads: " + threadsTotalCount + ", Allocated memory in threads: " + threadsTotalAllocatedMBs + " MB";
+		return "THREADS: Count: " + threadsTotalCount + ", Allocated memory in threads: " + threadsTotalAllocatedMBs + " MB";
 	}
 }

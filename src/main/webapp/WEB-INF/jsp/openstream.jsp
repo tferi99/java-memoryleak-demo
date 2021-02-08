@@ -25,13 +25,18 @@
 
         <form class="form-inline my-2 my-lg-0" action="/memstat">
             <input type="hidden" name="redirect" value="/openstream_init">
-            <button class="btn btn-primary my-2 my-sm-0 mr-2" type="submit">Memory status</button>
+            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Memory status</button>
+        </form>
+
+        <form class="form-inline my-2 my-lg-0" action="/threadstat">
+            <input type="hidden" name="redirect" value="openstream_init">
+            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Thread status</button>
         </form>
 
         <form class="form-inline my-2 my-lg-0" action="/gc">
             <input type="hidden" name="gc" value="1">
             <input type="hidden" name="redirect" value="/openstream_init">
-            <button class="btn btn-primary my-2 my-sm-0" type="submit">GC</button>
+            <button class="btn btn-warning my-2 my-sm-0" type="submit">GC</button>
         </form>
     </nav>
 
@@ -51,7 +56,10 @@
                         <input class="form-check-input" type="checkbox" id="gc" name="gc" ${gcChecked}>
                         <label class="form-check-label" for="gc" data-toggle="tooltip" data-placement="right" title="GC after creating memory leak">GC</label>
                     </div>
+
+                    <input type="hidden" name="redirect" value="/">
                     <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
+                    <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
                 </form>
             </div>
         </div>
@@ -75,6 +83,10 @@
         $('#form').submit();
         $('#btnSubmit').attr('disabled', true);
         $('.loader').show();
+    }
+
+    function onCancel() {
+        location.href = '/';
     }
 </script>
 
