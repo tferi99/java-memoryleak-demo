@@ -101,6 +101,10 @@
                     <input type="checkbox" id="releaseLock" ${memReleaseLock}>
                     <span class="slider round"></span>
                 </label>
+
+                <button class="btn btn-primary ml-3" onclick="notifyLockedObject()">Notify lock</button>
+                <hr>
+                <small><i>If objects not released call GC - maybe still not cleaned up by JVM.</i></small>
             </div>
         </div>
     </div>
@@ -126,7 +130,7 @@
     })
 
     function setLocked(locked) {
-        console.log("########## CHANGE: " + locked);
+        console.log("Locked changed: " + locked);
 
         $.ajax({
             type: 'GET',
@@ -137,6 +141,21 @@
             },
             error: function (result) {
                 console.error('threadmemlocked - error');
+            }
+        });
+    }
+
+    function notifyLockedObject(locked) {
+        console.log("Locked object(s) are notified");
+
+        $.ajax({
+            type: 'GET',
+            url: '/threadmemlocknotify',
+            success: function (result) {
+                console.log('threadmemlocknotify - ok');
+            },
+            error: function (result) {
+                console.error('threadmemlocknotify - error');
             }
         });
     }

@@ -96,7 +96,9 @@ public class TestThread extends Thread
 		if (TestThread.isMemReleaseLock()) {
 			String lockObj = TestThread.getMemLockObj();
 			synchronized (lockObj) {
+//				log.debug(this.getClass().getSimpleName() + "[" + id + "] BEFORE wait");
 				lockObj.wait();
+//				log.debug(this.getClass().getSimpleName() + "[" + id + "] AFTER wait");
 			}
 		}
 

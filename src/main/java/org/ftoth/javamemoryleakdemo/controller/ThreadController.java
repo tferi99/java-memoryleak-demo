@@ -64,17 +64,21 @@ public class ThreadController extends JspController
 			return "thread";
 		}
 
-		model.put("threadCountTotal", TestThread.getThreadsTotalCount());
-		model.put("threadAllocMbTotal", TestThread.getThreadsTotalAllocatedMBs());
-		model.put("threadCount", threadCountS);
-		model.put("mb", mbS);
-		model.put("threadMaxAgeSecs", threadMaxAgeSecs);
-		model.put("leakSize", TestThread.getThreadsTotalAllocatedMBs());
-		model.put("stayHere", stayHere ? CHECKBOX_CHECKED : "");
-		model.put("waitMsecs", waitMsecsS);
-		model.put("txt", txt);
-
 		if (stayHere) {
+			// model for next page
+			model.put("threadCountTotal", TestThread.getThreadsTotalCount());
+			model.put("threadAllocMbTotal", TestThread.getThreadsTotalAllocatedMBs());
+			model.put("threadCount", threadCountS);
+			model.put("mb", mbS);
+			model.put("threadMaxAgeSecs", threadMaxAgeSecs);
+			model.put("leakSize", TestThread.getThreadsTotalAllocatedMBs());
+			model.put("stayHere", stayHere ? CHECKBOX_CHECKED : "");
+			model.put("waitMsecs", waitMsecsS);
+			model.put("txt", txt);
+
+			boolean locked = TestThread.isMemReleaseLock();
+			model.put("memReleaseLock", locked ? CHECKBOX_CHECKED : "");
+
 			return "/thread";
 		}
 		return "redirect:" + redirect;
@@ -90,17 +94,36 @@ public class ThreadController extends JspController
 
 	@RequestMapping(value = "/threadmemlocked", method = RequestMethod.GET)
 	@ResponseBody
-	public void startThread(@RequestParam(value = "locked") String lockedS)
+	public void changeThreadMemLock(@RequestParam(value = "locked") String lockedS)
 	{
-		log.debug("threadmemlocked: " + lockedS);
+		if (log.isDebugEnabled()) {
+			log.debug("threadmemlocked: " + lockedS);
+		}
+
 		boolean locked = Boolean.parseBoolean(lockedS);
 		TestThread.setMemReleaseLock(locked);
 
-		if (TestThread.isMemReleaseLock()) {
+/*		if (TestThread.isMemReleaseLock()) {
 			String lockObj = TestThread.getMemLockObj();
 			synchronized (lockObj) {
 				lockObj.notifyAll();
 			}
+		}*/
+	}
+
+	@RequestMapping(value = "/threadmemlocknotify", method = RequestMethod.GET)
+	@ResponseBody
+	public void notifyThreadMemLock()
+	{
+		/*if (log.isDebugEnabled()) {
+			log.debug("threadmemlocknotify START");
+		}*/
+
+		String lockObj = TestThread.getMemLockObj();
+		synchronized (lockObj) {
+			//log.debug("threadmemlocknotify BEFORE notifyAll()");
+			lockObj.notifyAll();
+			//log.debug("threadmemlocknotify AFTER notifyAll()");
 		}
 	}
 }
