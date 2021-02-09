@@ -46,7 +46,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Start thread(s)</h5>
+                <h5 class="card-title">Start thread(s) <span class="badge badge-primary badge-pill" data-toggle="tooltip" data-placement="right" title="number of threds (and allocated size in MB)">${threadCountTotal} (${threadAllocMbTotal} MB)</span></h5>
                 <form id="form" action="/thread">
                     <div class="form-row">
                         <div class="form-group col-md-4">
@@ -67,16 +67,40 @@
                             <label for="waitMsecs">With msecs before allocating next 1 MB</label>
                             <input type="number" id="waitMsecs" name="waitMsecs" class="form-control" value="${waitMsecs}"  min="1">
                         </div>
-
+                        <div class="form-group col-md-6">
+                            <label for="txt">Content (random if empty)</label>
+                            <input  type="text" id="txt" name="txt" class="form-control" value="${txt}">
+                        </div>
                     </div>
                     <div >
                         <span style="color: red">${error}</span>
                     </div>
 
                     <input type="hidden" name="redirect" value="/">
-                    <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">OK</button>
-                    <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
+                    <div class="form-row">
+                        <div class="col-6">
+                            <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
+                            <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="stayHere" name="stayHere" ${stayHere}>
+                                <label class="form-check-label" for="stayHere">stay here</label>
+                            </div>
+                        </div>
+                    </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Thread memory release lock</h5>
+
+                <label class="switch">
+                    <input type="checkbox" id="releaseLock" ${memReleaseLock}>
+                    <span class="slider round"></span>
+                </label>
             </div>
         </div>
     </div>
@@ -84,9 +108,9 @@
     <div class="container-fluid mt-3">
         <div class="loader mx-auto" style="display: none"></div>
     </div>
+
 </div>
 
-<It allocates specified amount of MB memory by creating 1 KB random strings and adding to a
 
 <script type="text/javascript" src="webjars/popper.js/1.14.4/umd/popper.min.js"></script>
 <script type="text/javascript" src="webjars/jquery/3.3.1/jquery.js"></script>
@@ -94,8 +118,28 @@
 
 <script type="text/javascript">
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#releaseLock').change(function() {
+            setLocked(this.checked);
+        });
     })
+
+    function setLocked(locked) {
+        console.log("########## CHANGE: " + locked);
+
+        $.ajax({
+            type: 'GET',
+            url: '/threadmemlocked',
+            data: {'locked': locked},
+            success: function (result) {
+                console.log('threadmemlocked - ok');
+            },
+            error: function (result) {
+                console.error('threadmemlocked - error');
+            }
+        });
+    }
 
     function onSubmit() {
         $('#form').submit();

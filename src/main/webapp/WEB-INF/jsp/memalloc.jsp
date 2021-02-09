@@ -68,8 +68,18 @@
                     </div>
 
                     <input type="hidden" name="redirect" value="/">
-                    <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
-                    <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
+                    <div class="form-row">
+                        <div class="col-6">
+                            <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
+                            <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="stayHere" name="stayHere" ${stayHere}>
+                                <label class="form-check-label" for="stayHere">stay here</label>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

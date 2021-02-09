@@ -14,11 +14,14 @@ public class TestThread extends Thread
 	private static int currentThreadId = 0;
 	private static int threadsTotalCount = 0;
 	private static int threadsTotalAllocatedMBs = 0;
+	private static boolean memReleaseLock = false;
 
 	private int id;
 	private int aliveSeconds;
 	private int mbToAlloc;
 	private int waitMsecs;
+
+	private static String memLockObj = "this is lock";
 
 	private List<String> allocatedData;
 
@@ -52,7 +55,22 @@ public class TestThread extends Thread
 		TestThread.currentThreadId = currentThreadId;
 	}
 
-	public TestThread(int id, int mbToAlloc, int aliveSeconds, int waitMsecs)
+	public static boolean isMemReleaseLock()
+	{
+		return memReleaseLock;
+	}
+
+	public static void setMemReleaseLock(boolean memReleaseLock)
+	{
+		TestThread.memReleaseLock = memReleaseLock;
+	}
+
+	public static String getMemLockObj()
+	{
+		return memLockObj;
+	}
+
+	public TestThread(int id, int mbToAlloc, int aliveSeconds, String content, int waitMsecs)
 	{
 		this.id = id;
 		this.mbToAlloc = mbToAlloc;
@@ -75,6 +93,13 @@ public class TestThread extends Thread
 	@Override
 	protected void finalize() throws Throwable
 	{
+		if (TestThread.isMemReleaseLock()) {
+			String lockObj = TestThread.getMemLockObj();
+			synchronized (lockObj) {
+				lockObj.wait();
+			}
+		}
+
 		TestThread.threadsTotalCount--;
 		TestThread.threadsTotalAllocatedMBs -= mbToAlloc;
 
