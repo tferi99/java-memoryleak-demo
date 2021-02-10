@@ -19,9 +19,19 @@ public class SystemUtil
 	}
 
 	public static String getMemoryStatus() {
-		long total = Runtime.getRuntime().totalMemory() / MB;
-		long free = Runtime.getRuntime().freeMemory() / MB;
-		return "MEMORY: Total: " + total + "MB, Free: " + free + "MB, Used: " + (total - free) + "MB";
+		long total = Runtime.getRuntime().totalMemory();
+		long free = Runtime.getRuntime().freeMemory();
+		long used = total - free;
+		long totalMB = total / MB;
+		long freeMB = free / MB;
+		long usedMB = used / MB;
+		String stat = "MEMORY: Total/Free/Used: " + totalMB + "MB / " + freeMB + "MB / " + usedMB + "MB        (" + total + " / " + free + " / " + used + ")";
+		System.out.println(stat);
+
+		if (log.isDebugEnabled()) {
+			log.debug(stat);
+		}
+		return stat;
 	}
 
 	public static void gc(String context) {
