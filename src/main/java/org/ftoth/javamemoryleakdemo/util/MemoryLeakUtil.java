@@ -48,7 +48,7 @@ public class MemoryLeakUtil
 		List<String> list = new ArrayList<String>();
 
 		// 1 KB content
-		Random rand =  new Random();
+		Random rand = new Random();
 		String norandomContent = null;
 		if (!randomContent) {							// create 1K content once
 			StringBuffer b = new StringBuffer();
