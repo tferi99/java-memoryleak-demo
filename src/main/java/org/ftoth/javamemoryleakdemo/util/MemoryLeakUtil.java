@@ -26,7 +26,6 @@ public class MemoryLeakUtil
 		return allocateMemory(mbytes, null, waitPerMBytes);
 	}
 
-
 	/**
 	 * It allocates an ArrayList and it adds specified amount  
 	 * 1 KB random string
