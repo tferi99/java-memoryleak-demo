@@ -1,8 +1,6 @@
 package org.ftoth.javamemoryleakdemo.thread;
 
 import org.apache.log4j.Logger;
-import org.ftoth.javamemoryleakdemo.controller.MemAllocController;
-import org.ftoth.javamemoryleakdemo.controller.ThreadController;
 import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
 
 import java.util.List;
@@ -16,15 +14,17 @@ public class TestThread extends Thread
 	private static int threadsTotalAllocatedMBs = 0;
 	private static boolean memReleaseLock = false;
 
-	private int id;
+	private int customId;
 	private int aliveSeconds;
 	private int mbToAlloc;
 	private int waitMsecs;
+	private String tag;
 
 	private static String memLockObj = "this is lock";
 
 	private List<String> allocatedData;
 
+	// ------------------------------------- static ----------------------------------------
 	public static int getThreadsTotalCount()
 	{
 		return threadsTotalCount;
@@ -70,13 +70,44 @@ public class TestThread extends Thread
 		return memLockObj;
 	}
 
-	public TestThread(int id, int mbToAlloc, int aliveSeconds, String content, int waitMsecs)
+	// ------------------------------------- instance ----------------------------------------
+
+	public int getCustomId() {
+		return customId;
+	}
+
+	public int getAliveSeconds() {
+		return aliveSeconds;
+	}
+
+	public int getMbToAlloc() {
+		return mbToAlloc;
+	}
+
+	public int getWaitMsecs() {
+		return waitMsecs;
+	}
+
+	public List<String> getAllocatedData() {
+		return allocatedData;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public TestThread(int customId, int mbToAlloc, int aliveSeconds, String content, int waitMsecs) {
+		this(customId, mbToAlloc, aliveSeconds, content, waitMsecs, null);
+	}
+
+	public TestThread(int customId, int mbToAlloc, int aliveSeconds, String content, int waitMsecs, String tag)
 	{
-		this.id = id;
+		this.customId = customId;
 		this.mbToAlloc = mbToAlloc;
 		this.aliveSeconds = aliveSeconds;
 		this.waitMsecs = waitMsecs;
-		this.setName("Developer TestThread[" + id + "]");
+		this.tag = tag;
+		this.setName("Developer TestThread[" + customId + "]");
 
 		if (mbToAlloc > 0) {
 			allocatedData = MemoryLeakUtil.allocateMemory(mbToAlloc, waitMsecs);
@@ -86,7 +117,7 @@ public class TestThread extends Thread
 		TestThread.threadsTotalAllocatedMBs += mbToAlloc;
 
 		if (log.isDebugEnabled()) {
-			log.debug(this.getClass().getSimpleName() + "[" + id + "] created");
+			log.debug(toString() + " created");
 		}
 	}
 
@@ -96,9 +127,9 @@ public class TestThread extends Thread
 		if (TestThread.isMemReleaseLock()) {
 			String lockObj = TestThread.getMemLockObj();
 			synchronized (lockObj) {
-//				log.debug(this.getClass().getSimpleName() + "[" + id + "] BEFORE wait");
+//				log.debug(toString() + " BEFORE wait");
 				lockObj.wait();
-//				log.debug(this.getClass().getSimpleName() + "[" + id + "] AFTER wait");
+//				log.debug(toString() + " AFTER wait");
 			}
 		}
 
@@ -110,7 +141,7 @@ public class TestThread extends Thread
 			if(mbToAlloc > 0) {
 				released = " (released " + mbToAlloc + " MB)";
 			}
-			log.debug(this.getClass().getSimpleName() + "[" + id + "] deleted" + released);
+			log.debug(toString() + " deleted" + released);
 		}
 	}
 
@@ -119,7 +150,7 @@ public class TestThread extends Thread
 	{
 		for (int n=0; n<aliveSeconds; n++) {
 			if (log.isDebugEnabled()) {
-				log.debug(this.getClass().getSimpleName() + "[" + id + "] still alive for " + (aliveSeconds - n) + " second(s)");
+				log.debug(toString() + " still alive for " + (aliveSeconds - n) + " second(s)");
 			}
 			try {
 				Thread.sleep(1000);
@@ -128,12 +159,17 @@ public class TestThread extends Thread
 			}
 		}
 		if (log.isDebugEnabled()) {
-			log.debug(this.getClass().getSimpleName() + "[" + id + "] terminated");
+			log.debug(toString() + " terminated");
 		}
 	}
 
 	public static String getThreadStatus()
 	{
 		return "THREADS: Count: " + threadsTotalCount + ", Allocated memory in threads: " + threadsTotalAllocatedMBs + " MB";
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "[" + getId() + "][" + getCustomId() + "][" + getTag() + "]";
 	}
 }

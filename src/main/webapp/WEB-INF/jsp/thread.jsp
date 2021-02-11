@@ -63,13 +63,17 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="waitMsecs">With msecs before allocating next 1 MB</label>
                             <input type="number" id="waitMsecs" name="waitMsecs" class="form-control" value="${waitMsecs}"  min="1">
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="txt">Content (random if empty)</label>
                             <input  type="text" id="txt" name="txt" class="form-control" value="${txt}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="tag">Tag</label>
+                            <input  type="text" id="tag" name="tag" class="form-control" value="${tag}">
                         </div>
                     </div>
                     <div >

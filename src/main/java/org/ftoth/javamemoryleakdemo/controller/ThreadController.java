@@ -33,8 +33,8 @@ public class ThreadController extends JspController
 
 	@RequestMapping("/thread")
 	public String startThread(@RequestParam(value = "mb") String mbS, @RequestParam(value = "threadCount") String threadCountS, @RequestParam(value = "threadMaxAgeSecs") String threadMaxAgeSecsS,
-		@RequestParam(value = "txt") String txt, @RequestParam(value = "waitMsecs") String waitMsecsS, @RequestParam(value = "stayHere", required = false) String stayHereS,
-		@RequestParam(value = "redirect") String redirect, Map<String, Object> model)
+		@RequestParam(value = "txt") String txt, @RequestParam(value = "waitMsecs") String waitMsecsS, @RequestParam(value = "tag") String tag,
+  		@RequestParam(value = "stayHere", required = false) String stayHereS, @RequestParam(value = "redirect") String redirect, Map<String, Object> model)
 	{
 		boolean stayHere = stayHereS != null;
 
@@ -53,7 +53,7 @@ public class ThreadController extends JspController
 		try {
 			for (int n=0; n<threadCount; n++) {
 				int id = TestThread.getCurrentThreadId();
-				TestThread thr = new TestThread(id, mb, threadMaxAgeSecs, txt, waitMsecs);
+				TestThread thr = new TestThread(id, mb, threadMaxAgeSecs, txt, waitMsecs, tag);
 				thr.start();
 
 				TestThread.setCurrentThreadId(id + 1);
@@ -75,6 +75,7 @@ public class ThreadController extends JspController
 			model.put("stayHere", stayHere ? CHECKBOX_CHECKED : "");
 			model.put("waitMsecs", waitMsecsS);
 			model.put("txt", txt);
+			model.put("tag", tag);
 
 			boolean locked = TestThread.isMemReleaseLock();
 			model.put("memReleaseLock", locked ? CHECKBOX_CHECKED : "");
