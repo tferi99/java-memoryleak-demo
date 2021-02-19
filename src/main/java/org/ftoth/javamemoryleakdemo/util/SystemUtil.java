@@ -3,6 +3,8 @@ package org.ftoth.javamemoryleakdemo.util;
 import org.apache.log4j.Logger;
 import org.ftoth.javamemoryleakdemo.controller.MemAllocController;
 
+import java.lang.management.ManagementFactory;
+
 public class SystemUtil
 {
 	private static Logger log = Logger.getLogger(SystemUtil.class);
@@ -16,6 +18,10 @@ public class SystemUtil
 			return 32;
 		}
 		return 64;
+	}
+
+	public static String getJvmVersion() {
+		return System.getProperty("java.version");
 	}
 
 	public static String getMemoryStatus() {
@@ -42,5 +48,9 @@ public class SystemUtil
 		if (log.isDebugEnabled()) {
 			log.debug("------------------ GC after[" + context + "] END ------------------");
 		}
+	}
+
+	public static String getProcessInfo() {
+		return ManagementFactory.getRuntimeMXBean().getName();
 	}
 }
