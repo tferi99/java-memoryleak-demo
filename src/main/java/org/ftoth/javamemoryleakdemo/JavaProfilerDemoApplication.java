@@ -1,5 +1,6 @@
 package org.ftoth.javamemoryleakdemo;
 
+import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -1,6 +1,12 @@
+<%@ page import="org.ftoth.javamemoryleakdemo.util.SystemUtil" %>
 <!DOCTYPE html>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<%
+    String processInfo = SystemUtil.getProcessInfo();
+%>
+
 <html lang="en">
 <head>
     <!-- Access the bootstrap Css like this,
@@ -20,7 +26,7 @@
 <div class="container ml-5 mr-5">
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
         <a class="nav-link" href="/"><i class="fas fa-home"></i></a>
-        <span class="navbar-brand">Java Memory Leak Test</span>
+        <span class="navbar-brand">Java Memory Leak Test - <%=processInfo%></span>
         <div class="collapse navbar-collapse"></div>
 
         <form class="form-inline my-2 my-lg-0" action="/memstat">
@@ -44,6 +50,7 @@
     </div>
 
     <div class="container-fluid">
+        <h3>Streams</h3>
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Open a stream but don't close <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks">${openStreamCount} + ${leakCount} (${leakSize} MB)</span></h5>

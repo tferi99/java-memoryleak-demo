@@ -1,4 +1,5 @@
 <%@ page import="org.ftoth.javamemoryleakdemo.controller.JspController" %>
+<%@ page import="org.ftoth.javamemoryleakdemo.util.SystemUtil" %>
 <!DOCTYPE html>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -9,6 +10,9 @@
     int refreshSecs = 5;
     String refreshHead = JspController.createRefreshHeadCode(request, response, refreshSecs);
     String refreshBody = JspController.createRefreshBodyCode(request, response, refreshSecs);
+
+    String processInfo = SystemUtil.getProcessInfo();
+    String jvmVersion = SystemUtil.getJvmVersion();
 %>
 
 <html lang="en">
@@ -37,7 +41,7 @@
 <div class="container ml-5 mr-5">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
-        <span class="navbar-brand">Java Memory Leak Test</span>
+        <span class="navbar-brand">Java Memory Leak Test - <%=processInfo%></span>
         <div class="collapse navbar-collapse"></div>
 
         <form class="form-inline my-2 my-lg-0" action="/memstat">
@@ -79,6 +83,23 @@
         </li>
         -->
     </ul>
+
+    <h4 class="mt-5">Environment</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>JVM</td>
+                <td><%=jvmVersion%></td>
+            </tr>
+        </tbody>
+    </table>
+
 </div>
 
 <script type="text/javascript" src="webjars/popper.js/1.14.4/umd/popper.min.js"></script>
