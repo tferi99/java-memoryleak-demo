@@ -1,7 +1,7 @@
 package org.ftoth.javamemoryleakdemo.controller;
 
 import org.apache.log4j.Logger;
-import org.ftoth.javamemoryleakdemo.thread.TestThread;
+import org.ftoth.javamemoryleakdemo.thread.MyTestThread;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,15 +17,15 @@ public class ThreadController extends JspController
 
 	@RequestMapping("/thread_init")
 	public String memalloc_init(Map<String, Object> model) {
-		model.put("threadCountTotal", TestThread.getThreadsTotalCount());
-		model.put("threadAllocMbTotal", TestThread.getThreadsTotalAllocatedMBs());
+		model.put("threadCountTotal", MyTestThread.getThreadsTotalCount());
+		model.put("threadAllocMbTotal", MyTestThread.getThreadsTotalAllocatedMBs());
 		model.put("threadCount", 1);
 		model.put("mb", Integer.toString(20));
 		model.put("threadMaxAgeSecs", 10);
 		model.put("waitMsecs", 0);
-		model.put("leakSize", TestThread.getThreadsTotalAllocatedMBs());
+		model.put("leakSize", MyTestThread.getThreadsTotalAllocatedMBs());
 
-		boolean locked = TestThread.isMemReleaseLock();
+		boolean locked = MyTestThread.isMemReleaseLock();
 		model.put("memReleaseLock", locked ? CHECKBOX_CHECKED : "");
 
 		return "thread";
@@ -52,11 +52,11 @@ public class ThreadController extends JspController
 
 		try {
 			for (int n=0; n<threadCount; n++) {
-				int id = TestThread.getCurrentThreadId();
-				TestThread thr = new TestThread(id, mb, threadMaxAgeSecs, txt, waitMsecs, tag);
+				int id = MyTestThread.getCurrentThreadId();
+				MyTestThread thr = new MyTestThread(id, mb, threadMaxAgeSecs, txt, waitMsecs, tag);
 				thr.start();
 
-				TestThread.setCurrentThreadId(id + 1);
+				MyTestThread.setCurrentThreadId(id + 1);
 			}
 		}
 		catch (Exception e) {
@@ -66,18 +66,18 @@ public class ThreadController extends JspController
 
 		if (stayHere) {
 			// model for next page
-			model.put("threadCountTotal", TestThread.getThreadsTotalCount());
-			model.put("threadAllocMbTotal", TestThread.getThreadsTotalAllocatedMBs());
+			model.put("threadCountTotal", MyTestThread.getThreadsTotalCount());
+			model.put("threadAllocMbTotal", MyTestThread.getThreadsTotalAllocatedMBs());
 			model.put("threadCount", threadCountS);
 			model.put("mb", mbS);
 			model.put("threadMaxAgeSecs", threadMaxAgeSecs);
-			model.put("leakSize", TestThread.getThreadsTotalAllocatedMBs());
+			model.put("leakSize", MyTestThread.getThreadsTotalAllocatedMBs());
 			model.put("stayHere", stayHere ? CHECKBOX_CHECKED : "");
 			model.put("waitMsecs", waitMsecsS);
 			model.put("txt", txt);
 			model.put("tag", tag);
 
-			boolean locked = TestThread.isMemReleaseLock();
+			boolean locked = MyTestThread.isMemReleaseLock();
 			model.put("memReleaseLock", locked ? CHECKBOX_CHECKED : "");
 
 			return "/thread";
@@ -88,7 +88,7 @@ public class ThreadController extends JspController
 	@RequestMapping("/threadmemlock")
 	public String startThread(Map<String, Object> model)
 	{
-		boolean locked = TestThread.isMemReleaseLock();
+		boolean locked = MyTestThread.isMemReleaseLock();
 		model.put("memReleaseLock", locked ? CHECKBOX_CHECKED : "");
 		return "threadmemlock";
 	}
@@ -102,7 +102,7 @@ public class ThreadController extends JspController
 		}
 
 		boolean locked = Boolean.parseBoolean(lockedS);
-		TestThread.setMemReleaseLock(locked);
+		MyTestThread.setMemReleaseLock(locked);
 
 /*		if (TestThread.isMemReleaseLock()) {
 			String lockObj = TestThread.getMemLockObj();
@@ -120,7 +120,7 @@ public class ThreadController extends JspController
 			log.debug("threadmemlocknotify START");
 		}*/
 
-		String lockObj = TestThread.getMemLockObj();
+		String lockObj = MyTestThread.getMemLockObj();
 		synchronized (lockObj) {
 			//log.debug("threadmemlocknotify BEFORE notifyAll()");
 			lockObj.notifyAll();

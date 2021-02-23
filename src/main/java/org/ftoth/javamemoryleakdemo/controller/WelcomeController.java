@@ -2,7 +2,7 @@ package org.ftoth.javamemoryleakdemo.controller;
 
 import java.util.Map;
 
-import org.ftoth.javamemoryleakdemo.thread.TestThread;
+import org.ftoth.javamemoryleakdemo.thread.MyTestThread;
 import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,8 +31,8 @@ public class WelcomeController
 		model.put("streamCount", openStreamController.getOpenStreamCount());
 		model.put("streamLeakCount", openStreamController.getLeakCount());
 		model.put("streamLeakSize", openStreamController.getLeakSize() / MemoryLeakUtil.MB);
-		model.put("threadCount", TestThread.getThreadsTotalCount());
-		model.put("threadLeakSize", TestThread.getThreadsTotalAllocatedMBs());
+		model.put("threadCount", MyTestThread.getThreadsTotalCount());
+		model.put("threadLeakSize", MyTestThread.getThreadsTotalAllocatedMBs());
 		return "welcome";
 	}
 }

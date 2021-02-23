@@ -4,10 +4,13 @@ import org.apache.log4j.Logger;
 import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class TestThread extends Thread
+public class MyTestThread extends Thread
 {
-	private static Logger log = Logger.getLogger(TestThread.class);
+	private static Logger log = Logger.getLogger(MyTestThread.class);
+
+	AtomicInteger dataId = new AtomicInteger(0);
 
 	private static int currentThreadId = 0;
 	private static int threadsTotalCount = 0;
@@ -22,7 +25,7 @@ public class TestThread extends Thread
 
 	private static String memLockObj = "this is lock";
 
-	private List<String> allocatedData;
+	private MyTestData allocatedData;
 
 	// ------------------------------------- static ----------------------------------------
 	public static int getThreadsTotalCount()
@@ -32,7 +35,7 @@ public class TestThread extends Thread
 
 	public static void setThreadsTotalCount(int threadsTotalCount)
 	{
-		TestThread.threadsTotalCount = threadsTotalCount;
+		MyTestThread.threadsTotalCount = threadsTotalCount;
 	}
 
 	public static int getThreadsTotalAllocatedMBs()
@@ -42,7 +45,7 @@ public class TestThread extends Thread
 
 	public static void setThreadsTotalAllocatedMBs(int threadsTotalAllocatedMBs)
 	{
-		TestThread.threadsTotalAllocatedMBs = threadsTotalAllocatedMBs;
+		MyTestThread.threadsTotalAllocatedMBs = threadsTotalAllocatedMBs;
 	}
 
 	public static int getCurrentThreadId()
@@ -52,7 +55,7 @@ public class TestThread extends Thread
 
 	public static void setCurrentThreadId(int currentThreadId)
 	{
-		TestThread.currentThreadId = currentThreadId;
+		MyTestThread.currentThreadId = currentThreadId;
 	}
 
 	public static boolean isMemReleaseLock()
@@ -62,7 +65,7 @@ public class TestThread extends Thread
 
 	public static void setMemReleaseLock(boolean memReleaseLock)
 	{
-		TestThread.memReleaseLock = memReleaseLock;
+		MyTestThread.memReleaseLock = memReleaseLock;
 	}
 
 	public static String getMemLockObj()
@@ -88,7 +91,7 @@ public class TestThread extends Thread
 		return waitMsecs;
 	}
 
-	public List<String> getAllocatedData() {
+	public MyTestData getAllocatedData() {
 		return allocatedData;
 	}
 
@@ -96,25 +99,27 @@ public class TestThread extends Thread
 		return tag;
 	}
 
-	public TestThread(int customId, int mbToAlloc, int aliveSeconds, String content, int waitMsecs) {
+	public MyTestThread(int customId, int mbToAlloc, int aliveSeconds, String content, int waitMsecs) {
 		this(customId, mbToAlloc, aliveSeconds, content, waitMsecs, null);
 	}
 
-	public TestThread(int customId, int mbToAlloc, int aliveSeconds, String content, int waitMsecs, String tag)
+	public MyTestThread(int customId, int mbToAlloc, int aliveSeconds, String content, int waitMsecs, String tag)
 	{
 		this.customId = customId;
 		this.mbToAlloc = mbToAlloc;
 		this.aliveSeconds = aliveSeconds;
 		this.waitMsecs = waitMsecs;
 		this.tag = tag;
-		this.setName("Developer TestThread[" + customId + "]");
+		this.setName("Developer MyTestThread[" + customId + "]");
 
 		if (mbToAlloc > 0) {
-			allocatedData = MemoryLeakUtil.allocateMemory(mbToAlloc, waitMsecs);
+			List<String> data = MemoryLeakUtil.allocateMemory(mbToAlloc, waitMsecs);
+			int id = dataId.incrementAndGet();
+			allocatedData = new MyTestData("Data-" + id, data);
 		}
 
-		TestThread.threadsTotalCount++;
-		TestThread.threadsTotalAllocatedMBs += mbToAlloc;
+		MyTestThread.threadsTotalCount++;
+		MyTestThread.threadsTotalAllocatedMBs += mbToAlloc;
 
 		if (log.isDebugEnabled()) {
 			log.debug(toString() + " created");
@@ -124,8 +129,8 @@ public class TestThread extends Thread
 	@Override
 	protected void finalize() throws Throwable
 	{
-		if (TestThread.isMemReleaseLock()) {
-			String lockObj = TestThread.getMemLockObj();
+		if (MyTestThread.isMemReleaseLock()) {
+			String lockObj = MyTestThread.getMemLockObj();
 			synchronized (lockObj) {
 //				log.debug(toString() + " BEFORE wait");
 				lockObj.wait();
@@ -133,8 +138,8 @@ public class TestThread extends Thread
 			}
 		}
 
-		TestThread.threadsTotalCount--;
-		TestThread.threadsTotalAllocatedMBs -= mbToAlloc;
+		MyTestThread.threadsTotalCount--;
+		MyTestThread.threadsTotalAllocatedMBs -= mbToAlloc;
 
 		if (log.isDebugEnabled()) {
 			String released = "";
