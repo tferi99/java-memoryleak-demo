@@ -10,7 +10,7 @@ public class TestData
 	private static Integer OSBits;
 
 	private String title;
-	private List<String> data = new ArrayList<String>();
+	private List<List<String>> data = new ArrayList<List<String>>();
 
 	public String getTitle()
 	{
@@ -22,28 +22,41 @@ public class TestData
 		this.title = title;
 	}
 
-	public List<String> getData()
-	{
-		return data;
-	}
-
-	public void setData(List<String> data)
-	{
-		this.data = data;
-	}
-
-	public TestData(String title, List<String> data)
+	public TestData(String title)
 	{
 		this.title = title;
-		this.data = data;
 	}
 
-	//------------------ utility ------------------ 
-	public long getSize()
+	public void removeFirst()
+	{
+		if (data.size() <= 0) {
+			return;
+		}
+
+		synchronized (data) {
+			data.remove(0);
+		}
+	}
+
+	public void addData(List<String> d) {
+		data.add(d);
+	}
+
+	//------------------ utility ------------------
+	public int getSize()
+	{
+		return data.size();
+	}
+
+	public long getSizeInBytes()
 	{
 		int size = 0;
-		for (String d: data) {
-			size += getStringSize(d);
+		synchronized (data) {
+			for (List<String> list: data) {
+				for (String d : list) {
+					size += getStringSize(d);
+				}
+			}
 		}
 		return size;
 	}
@@ -67,5 +80,16 @@ public class TestData
 			OSBits = SystemUtil.getOSBits();
 		}
 		return OSBits;
+	}
+
+	public void freeItems(int num) {
+		if (num <= 0) {
+			return;
+		}
+		synchronized (data) {
+			for (int n=0; n<num; n++) {
+				data.remove(0);
+			}
+		}
 	}
 }

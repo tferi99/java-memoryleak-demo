@@ -23,7 +23,7 @@ public class MemoryLeakUtil
 
 	public static synchronized List<String> allocateMemory(int mbytes, int waitPerMBytes)
 	{
-		return allocateMemory(mbytes, null, waitPerMBytes);
+		return allocate1mbMemory(mbytes, null, waitPerMBytes);
 	}
 
 	/**
@@ -31,19 +31,13 @@ public class MemoryLeakUtil
 	 * 1 KB random string
 	 *
 	 *
-	 * @param mbytes
 	 * @param content if null/empty then random content will be generated
-	 * @param waitPerMBytes
+	 * @param waitAfterAlloc
 	 * @return
 	 */
-	public static synchronized List<String> allocateMemory(int mbytes, String content, int waitPerMBytes)
+	public static synchronized List<String> allocate1mbMemory(String content, int waitAfterAlloc)
 	{
 		boolean randomContent = content == null || content.equals("");
-
-		if (log.isDebugEnabled()) {
-			String cnt = randomContent ? "random content" : "'" + content + "'";
-			log.debug("Allocating " + mbytes + " MBytes with " + cnt);
-		}
 
 		List<String> list = new ArrayList<String>();
 
@@ -64,52 +58,47 @@ public class MemoryLeakUtil
 			norandomContent = b.toString();
 		}
 
-		// N MB data into ArrayList
-		for (int n=0; n<mbytes; n++) {
-			String content1K;
-			if (log.isDebugEnabled()) {
+		// 1 MB data into ArrayList
+		String content1K;
+		if (log.isDebugEnabled()) {
 //				log.debug("Allocating 1MB #" + (n + 1));
-			}
+		}
 
-			// 1 MB data into ArrayList
-			for(int m=0; m<1024; m++) {
-				StringBuffer b = new StringBuffer();
-				if (randomContent) {							// content is random
-					// 1K random pattern as a String
-					for (int i = 0; i < 512; i++) {            // 1 char is 2 bytes
-						b.append(Integer.toString(rand.nextInt(9)));
-					}
+		// 1 MB data into ArrayList
+		for(int m=0; m<1024; m++) {
+			StringBuffer b = new StringBuffer();
+			if (randomContent) {							// content is random
+				// 1K random pattern as a String
+				for (int i = 0; i < 512; i++) {            // 1 char is 2 bytes
+					b.append(Integer.toString(rand.nextInt(9)));
 				}
-				else {											// content = random_header + notrandom
-					for (int i = 0; i < RANDOM_HEAD_LEN-1; i++) {            // 1 char is 2 bytes
-						b.append(Integer.toString(rand.nextInt(9)));
-					}
-					b.append("|");
-					b.append(norandomContent);
+			}
+			else {											// content = random_header + notrandom
+				for (int i = 0; i < RANDOM_HEAD_LEN-1; i++) {            // 1 char is 2 bytes
+					b.append(Integer.toString(rand.nextInt(9)));
 				}
-				content1K = b.toString();
+				b.append("|");
+				b.append(norandomContent);
+			}
+			content1K = b.toString();
 
 /*				if (log.isDebugEnabled()) {
-					log.debug("Content[" + m + "][" + content1K.length() + "] : " + content1K);
-				}*/
-				list.add(content1K);
-			}
-
-			// wait after allocation
-			if (waitPerMBytes > 0) {
-				try {
-					if (log.isDebugEnabled()) {
-						log.debug("Waiting for " + waitPerMBytes + " msecs...");
-					}
-					Thread.sleep(waitPerMBytes);
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+				log.debug("Content[" + m + "][" + content1K.length() + "] : " + content1K);
+			}*/
+			list.add(content1K);
 		}
-		if (log.isDebugEnabled()) {
-			log.debug("    ----> Allocated " + mbytes + " MBytes ...");
+
+		// wait after allocation
+		if (waitAfterAlloc > 0) {
+			try {
+				if (log.isDebugEnabled()) {
+					log.debug("Waiting for " + waitAfterAlloc + " msecs...");
+				}
+				Thread.sleep(waitAfterAlloc);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return list;
 	}

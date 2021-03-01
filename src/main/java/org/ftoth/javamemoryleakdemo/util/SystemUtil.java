@@ -4,12 +4,14 @@ import org.apache.log4j.Logger;
 import org.ftoth.javamemoryleakdemo.controller.MemAllocController;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryType;
 
 public class SystemUtil
 {
 	private static Logger log = Logger.getLogger(SystemUtil.class);
 
-	private static final int MB = 1024 * 1024;
+	public static final int MB = 1024 * 1024;
 
 	public static int getOSBits()
 	{
@@ -31,13 +33,14 @@ public class SystemUtil
 		long totalMB = total / MB;
 		long freeMB = free / MB;
 		long usedMB = used / MB;
-		String stat = "MEMORY: Total/Free/Used: " + totalMB + "MB / " + freeMB + "MB / " + usedMB + "MB        (" + total + " / " + free + " / " + used + ")";
-		System.out.println(stat);
-
-		if (log.isDebugEnabled()) {
-			log.debug(stat);
+		StringBuilder b = new StringBuilder();
+		b.append("MEMORY: Total/Free/Used: " + totalMB + "MB / " + freeMB + "MB / " + usedMB + "MB  (" + total + " / " + free + " / " + used + ")\n");
+		for (MemoryPoolMXBean mpBean: ManagementFactory.getMemoryPoolMXBeans()) {
+			if (mpBean.getType() == MemoryType.HEAP) {
+				b.append("    - " + mpBean.getName() + "=" + mpBean.getUsage() + "\n");
+			}
 		}
-		return stat;
+		return b.toString();
 	}
 
 	public static void gc(String context) {

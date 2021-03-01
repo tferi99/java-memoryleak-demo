@@ -28,7 +28,7 @@ public class OpenStreamController extends JspController
 	{
 		long size = 0;
 		for(TestData d: leak) {
-			size += d.getSize();
+			size += d.getSizeInBytes();
 		}
 		return size;
 	}
