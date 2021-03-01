@@ -1,5 +1,6 @@
 <%@ page import="org.ftoth.javamemoryleakdemo.util.SystemUtil" %>
 <%@ page import="org.ftoth.javamemoryleakdemo.controller.MemAllocController" %>
+<%@ page import="org.ftoth.javamemoryleakdemo.model.TestDataUtil" %>
 <!DOCTYPE html>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -7,8 +8,8 @@
 
 <%
     String processInfo = SystemUtil.getProcessInfo();
-    int leakCount = MemAllocController.getLeakCount();
-    String leakSize = Long.toString(MemAllocController.getLeakSize() / SystemUtil.MB) + " MB" ;
+    int leakCount = TestDataUtil.getLeakCount();
+    String leakSize = Long.toString(TestDataUtil.getLeakSize()) + " bytes, " + Long.toString(TestDataUtil.getLeakSize() / SystemUtil.MB) + " MB";
 %>
 
 <head>
@@ -60,10 +61,6 @@
                     <div class="form-group">
                         <label for="mb">MB</label>
                         <input  type="number" id="mb" name="mb" class="form-control" value="${mb}" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label for="txt">Content (random if empty)</label>
-                        <input  type="text" id="txt" name="txt" class="form-control" value="${txt}">
                     </div>
 
                     <div class="form-row">

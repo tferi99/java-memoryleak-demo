@@ -5,64 +5,86 @@ import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Test data which contains 1K Strings in a list.
+ */
 public class TestData
 {
 	private static Integer OSBits;
 
 	private String title;
-	private List<List<String>> data = new ArrayList<List<String>>();
+	private int originalItemCount;
+	private TestDataUnit unit;
+	private List<String> items;			// 1K String items
 
 	public String getTitle()
 	{
 		return title;
 	}
 
-	public void setTitle(String title)
+	public TestData(String title, List<String> items)
 	{
 		this.title = title;
+		this.items = items;
+		originalItemCount = items.size();
 	}
 
-	public TestData(String title)
-	{
-		this.title = title;
+	protected List<String> getItems() {
+		return items;
 	}
 
-	public void removeFirst()
+	public int getItemCount()
 	{
-		if (data.size() <= 0) {
-			return;
+		return items.size();
+	}
+
+	public int getOriginalItemCount() {
+		return originalItemCount;
+	}
+
+	/**
+	 *
+	 * @param num
+	 * @return if object is empty, there is no more items
+	 */
+	public boolean freeItems(int num) {
+		if (num <= 0) {
+			return false;
 		}
 
-		synchronized (data) {
-			data.remove(0);
+		synchronized (items) {
+			if (num >= items.size()) {
+				// delete all
+				items.clear();
+				return true;
+			}
+
+			// not all deleted
+			int origSize = items.size();
+			for (int n=0; n<num; n++) {
+				items.remove(0);
+			}
+			return false;
 		}
-	}
-
-	public void addData(List<String> d) {
-		data.add(d);
-	}
-
-	//------------------ utility ------------------
-	public int getSize()
-	{
-		return data.size();
 	}
 
 	public long getSizeInBytes()
 	{
 		int size = 0;
-		synchronized (data) {
-			for (List<String> list: data) {
-				for (String d : list) {
-					size += getStringSize(d);
-				}
+		synchronized (items) {
+			for (String item: items) {
+				size += getStringSize(item);
 			}
 		}
 		return size;
 	}
 
-	//------------------ helpers ------------------ 
-	private long getStringSize(String s)
+	//------------------ helpers ------------------
+	public void allocateUnits(TestDataUnit unit, int amount) {
+
+	}
+
+	private static long getStringSize(String s)
 	{
 		if (s == null) {
 			return getOSBits() / 8;		// just a reference
@@ -74,7 +96,7 @@ public class TestData
 		return  32 + s.length() * 2;
 	}
 
-	private int getOSBits()
+	private static int getOSBits()
 	{
 		if (OSBits == null) {
 			OSBits = SystemUtil.getOSBits();
@@ -82,14 +104,11 @@ public class TestData
 		return OSBits;
 	}
 
-	public void freeItems(int num) {
-		if (num <= 0) {
-			return;
+	public static int getStringCharLenBytes(int bytes) {
+		if (getOSBits() == 64) {
+			return (bytes - 36) / 2;
 		}
-		synchronized (data) {
-			for (int n=0; n<num; n++) {
-				data.remove(0);
-			}
-		}
+		// 32
+		return (bytes - 32) / 2;
 	}
 }

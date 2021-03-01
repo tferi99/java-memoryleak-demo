@@ -1,7 +1,7 @@
 package org.ftoth.javamemoryleakdemo.controller;
 
 import org.apache.log4j.Logger;
-import org.ftoth.javamemoryleakdemo.thread.MyTestThread;
+import org.ftoth.javamemoryleakdemo.model.MyTestThread;
 import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
