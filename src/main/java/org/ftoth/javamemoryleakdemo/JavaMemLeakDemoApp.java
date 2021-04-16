@@ -1,13 +1,12 @@
 package org.ftoth.javamemoryleakdemo;
 
-import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JavaProfilerDemoApplication {
+public class JavaMemLeakDemoApp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JavaProfilerDemoApplication.class, args);
+		SpringApplication.run(JavaMemLeakDemoApp.class, args);
 	}
 }

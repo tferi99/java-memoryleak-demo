@@ -11,7 +11,7 @@ public class SystemUtil
 {
 	private static Logger log = Logger.getLogger(SystemUtil.class);
 
-	private static final int MB = 1024 * 1024;
+	public static final int MB = 1024 * 1024;
 
 	public static int getOSBits()
 	{
@@ -33,12 +33,11 @@ public class SystemUtil
 		long totalMB = total / MB;
 		long freeMB = free / MB;
 		long usedMB = used / MB;
-		StringBuffer b = new StringBuffer();
-		b.append("MEMORY: Total/Free/Used: " + totalMB + "MB / " + freeMB + "MB / " + usedMB + "MB        (" + total + " / " + free + " / " + used + ")\n");
-
+		StringBuilder b = new StringBuilder();
+		b.append("MEMORY: Total/Free/Used: " + totalMB + "MB / " + freeMB + "MB / " + usedMB + "MB  (" + total + " / " + free + " / " + used + ")\n");
 		for (MemoryPoolMXBean mpBean: ManagementFactory.getMemoryPoolMXBeans()) {
 			if (mpBean.getType() == MemoryType.HEAP) {
-				b.append("	- " + mpBean.getName() + ": " +  mpBean.getUsage() + "\n");
+				b.append("    - " + mpBean.getName() + "=" + mpBean.getUsage() + "\n");
 			}
 		}
 		return b.toString();

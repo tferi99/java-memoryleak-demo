@@ -29,14 +29,9 @@
         <span class="navbar-brand">Java Memory Leak Test - <%=processInfo%></span>
         <div class="collapse navbar-collapse"></div>
 
-        <form class="form-inline my-2 my-lg-0" action="/memstat">
+        <form class="form-inline my-2 my-lg-0" action="/stat">
             <input type="hidden" name="redirect" value="/openstream_init">
-            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Memory status</button>
-        </form>
-
-        <form class="form-inline my-2 my-lg-0" action="/threadstat">
-            <input type="hidden" name="redirect" value="openstream_init">
-            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Thread status</button>
+            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Status</button>
         </form>
 
         <form class="form-inline my-2 my-lg-0" action="/gc">

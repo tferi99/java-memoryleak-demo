@@ -2,7 +2,7 @@ package org.ftoth.javamemoryleakdemo.controller;
 
 import org.apache.log4j.Logger;
 import org.ftoth.javamemoryleakdemo.model.TestData;
-import org.ftoth.javamemoryleakdemo.util.MemoryLeakUtil;
+import org.ftoth.javamemoryleakdemo.model.TestDataUtil;
 import org.ftoth.javamemoryleakdemo.util.SystemUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +28,7 @@ public class OpenStreamController extends JspController
 	{
 		long size = 0;
 		for(TestData d: leak) {
-			size += d.getSize();
+			size += d.getSizeInBytes();
 		}
 		return size;
 	}
@@ -43,7 +43,7 @@ public class OpenStreamController extends JspController
 	{
 		model.put("openStreamCount", getOpenStreamCount());
 		model.put("leakCount", getLeakCount());
-		model.put("leakSize", getLeakSize() / MemoryLeakUtil.MB);
+		model.put("leakSize", getLeakSize() / TestDataUtil.MB);
 		model.put("storeChecked", "");
 		model.put("gcChecked", CHECKBOX_CHECKED);
 		return "openstream";
@@ -59,7 +59,7 @@ public class OpenStreamController extends JspController
 		int generated = leak.size();
 		generated++;
 
-		List<String> data = MemoryLeakUtil.readStreamButDontCloseIt();
+		List<String> data = TestDataUtil.readStreamButDontCloseIt();
 		numberOfOpenStreams++;
 		if (log.isDebugEnabled()) {
 			log.debug("Generated a memory leak from a not-closed stream");
@@ -79,7 +79,7 @@ public class OpenStreamController extends JspController
 
 		model.put("openStreamCount", getOpenStreamCount());
 		model.put("leakCount", getLeakCount());
-		model.put("leakSize", getLeakSize() / MemoryLeakUtil.MB);
+		model.put("leakSize", getLeakSize() / TestDataUtil.MB);
 		model.put("storeChecked", isStored ? CHECKBOX_CHECKED : "");
 		model.put("gcChecked", isGc ? CHECKBOX_CHECKED : "");
 

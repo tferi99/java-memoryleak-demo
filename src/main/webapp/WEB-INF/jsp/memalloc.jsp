@@ -1,4 +1,6 @@
 <%@ page import="org.ftoth.javamemoryleakdemo.util.SystemUtil" %>
+<%@ page import="org.ftoth.javamemoryleakdemo.controller.MemAllocController" %>
+<%@ page import="org.ftoth.javamemoryleakdemo.model.TestDataUtil" %>
 <!DOCTYPE html>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -6,6 +8,8 @@
 
 <%
     String processInfo = SystemUtil.getProcessInfo();
+    int leakCount = TestDataUtil.getLeakCount();
+    String leakSize = Long.toString(TestDataUtil.getLeakSize()) + " bytes, " + Long.toString(TestDataUtil.getLeakSize() / SystemUtil.MB) + " MB";
 %>
 
 <head>
@@ -31,14 +35,9 @@
         <span class="navbar-brand">Java Memory Leak Test - <%=processInfo%></span>
         <div class="collapse navbar-collapse"></div>
 
-        <form class="form-inline my-2 my-lg-0" action="/memstat">
+        <form class="form-inline my-2 my-lg-0" action="/stat">
             <input type="hidden" name="redirect" value="/memalloc_init">
-            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Memory status</button>
-        </form>
-
-        <form class="form-inline my-2 my-lg-0" action="/threadstat">
-            <input type="hidden" name="redirect" value="memalloc_init">
-            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Thread status</button>
+            <button class="btn btn-success my-2 my-sm-0 mr-2" type="submit">Status</button>
         </form>
 
         <form class="form-inline my-2 my-lg-0" action="/gc">
@@ -52,39 +51,49 @@
     </div>
 
     <div class="container-fluid">
-        <h3>Memory</h3>
+        <h3>Memory <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks (and size in MB)"><%=leakCount%> (<%=leakSize%> MB)</span></h3>
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Allocate memory <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks (and size in MB)">${leakCount} (${leakSize} MB)</span></h5>
-                <form id="form" action="/memalloc">
+                <h5 class="card-title">Allocate memory</h5>
+                <form id="formAlloc" action="/memalloc">
+                    <input type="hidden" name="action" value="alloc">
+
                     <div class="form-group">
                         <label for="mb">MB</label>
                         <input  type="number" id="mb" name="mb" class="form-control" value="${mb}" min="0">
                     </div>
-                    <div class="form-group">
-                        <label for="txt">Content (random if empty)</label>
-                        <input  type="text" id="txt" name="txt" class="form-control" value="${txt}">
-                    </div>
-                    <div class="form-group form-check">
-                        <input class="form-check-input" type="checkbox" id="store" name="store" ${storeChecked}>
-                        <label class="form-check-label" for="store" data-toggle="tooltip" data-placement="right">generate memory leak</label>
-                    </div>
-                    <div class="form-group form-check">
-                        <input class="form-check-input" type="checkbox" id="gc" name="gc" ${gcChecked}>
-                        <label class="form-check-label" for="gc" data-toggle="tooltip" data-placement="right">GC after allocation</label>
-                    </div>
 
-                    <input type="hidden" name="redirect" value="/">
                     <div class="form-row">
                         <div class="col-6">
-                            <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="onSubmit()">Submit</button>
-                            <button type="button" class="btn btn-danger" onclick="onCancel()">Cancel</button>
+                            <button id="btnSubmitAlloc" type="submit" class="btn btn-primary" onclick="onSubmitAlloc()">OK</button>
                         </div>
+                        <!--
                         <div class="col-6 text-right">
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="checkbox" id="stayHere" name="stayHere" ${stayHere}>
                                 <label class="form-check-label" for="stayHere">stay here</label>
                             </div>
+                        </div>
+                        -->
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Free memory</h5>
+                <form id="formFree" action="/memalloc">
+                    <input type="hidden" name="action" value="free">
+
+                    <div class="form-group">
+                        <label for="mb">MB</label>
+                        <input  type="number" id="mb" name="mb" class="form-control" value="${mb}" min="0">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-6">
+                            <button id="btnSubmitFree" type="submit" class="btn btn-primary" onclick="onSubmitFree()">OK</button>
                         </div>
                     </div>
                 </form>
@@ -108,15 +117,18 @@
         $('[data-toggle="tooltip"]').tooltip()
     })
 
-    function onSubmit() {
-        $('#form').submit();
-        $('#btnSubmit').attr('disabled', true);
+    function onSubmitAlloc() {
+        $('#formAlloc').submit();
+        $('#btnSubmitAlloc').attr('disabled', true);
         $('.loader').show();
     }
 
-    function onCancel() {
-        location.href = '/';
+    function onSubmitFree() {
+        $('#formFree').submit();
+        $('#btnSubmitFree').attr('disabled', true);
+        $('.loader').show();
     }
+
 </script>
 
 </body>
