@@ -54,7 +54,7 @@
         <h3>Memory <span class="badge badge-primary badge-pill"  data-toggle="tooltip" data-placement="right" title="number of memory leaks (and size in MB)"><%=leakCount%> (<%=leakSize%> MB)</span></h3>
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Allocate memory</h5>
+                <h5 class="card-title">Allocate memory (TestData)</h5>
                 <form id="formAlloc" action="/memalloc">
                     <input type="hidden" name="action" value="alloc">
 
